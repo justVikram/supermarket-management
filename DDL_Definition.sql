@@ -45,6 +45,7 @@ create table Product
 	Product_Name varchar(15) null,
 	Brand_ID int null,
 	Cost int not null,
+	Discount int null,
 	constraint Product_Brand_Brand_ID_fk
 		foreign key (Brand_ID) references Brand (Brand_ID)
 			on update cascade on delete cascade
@@ -59,16 +60,6 @@ create table Current_Inventory
 		foreign key (Branch_ID) references Branch (Branch_ID)
 			on update cascade on delete cascade,
 	constraint Current_Inventory_Product_Product_ID_fk
-		foreign key (Product_ID) references Product (Product_ID)
-			on update cascade on delete cascade
-);
-
-create table Discount
-(
-	Product_ID int null,
-	Discount_Amount int null,
-	New_Price int null,
-	constraint Discount_Product_Product_ID_fk
 		foreign key (Product_ID) references Product (Product_ID)
 			on update cascade on delete cascade
 );
