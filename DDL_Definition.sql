@@ -114,6 +114,10 @@ create table Transaction
 	Date date null,
 	Customer_ID int null,
 	Staff_ID int null,
+	Branch_ID int null,
+	constraint Transaction_Branch_Branch_ID_fk
+		foreign key (Branch_ID) references Branch (Branch_ID)
+			on update cascade on delete cascade,
 	constraint Transaction_Customer_Customer_ID_fk
 		foreign key (Customer_ID) references Customer (Customer_ID),
 	constraint Transaction_Payment_Info_Payment_ID_fk
