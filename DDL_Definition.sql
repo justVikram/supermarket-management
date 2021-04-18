@@ -28,7 +28,8 @@ create table Job_Designation
 	Job_ID int not null
 		primary key,
 	Job_Name varchar(15) null,
-	Number_Of_Work_Hours int null
+	Number_Of_Work_Hours int null,
+	Salary bigint null
 );
 
 create table Payment_Info
@@ -85,7 +86,6 @@ create table Staff
 	Staff_First_Name varchar(15) null,
 	Staff_Last_Name varchar(15) null,
 	Gender varchar(1) null,
-	Salary bigint null,
 	constraint Staff_Branch_Branch_ID_fk
 		foreign key (Branch_ID) references Branch (Branch_ID)
 			on update cascade on delete cascade,
