@@ -1,140 +1,154 @@
-create table Branch
+--Supermarket Management System
+create table customer
 (
-	Branch_ID int not null
+	customer_ph_no int not null
 		primary key,
-	Branch_Name varchar(20) null,
-	Location varchar(20) null
+	first_name varchar(10) null,
+	last_name varchar(10) null,
+	addr_line_1 varchar(20) null,
+	addr_line_2 varchar(20) null
 );
 
-create table Brand
+create table orders
 (
-	Brand_ID int not null
+	order_id int not null
 		primary key,
-	Brand_Name varchar(20) null
-);
-
-create table Customer
-(
-	Customer_ID int not null
-		primary key,
-	Customer_First_Name varchar(15) null,
-	Customer_Last_Name varchar(15) null,
-	Phone_Number bigint null,
-	Customer_Type varchar(10) null
-);
-
-create table Job_Designation
-(
-	Job_ID int not null
-		primary key,
-	Job_Name varchar(15) null,
-	Number_Of_Work_Hours int null,
-	Salary bigint null
-);
-
-create table Payment_Info
-(
-	Payment_ID int not null
-		primary key,
-	Payment_Mode int null
-);
-
-create table Product
-(
-	Product_ID int not null
-		primary key,
-	Product_Name varchar(15) null,
-	Brand_ID int null,
-	Cost int not null,
-	Discount int null,
-	constraint Product_Brand_Brand_ID_fk
-		foreign key (Brand_ID) references Brand (Brand_ID)
+	order_date date null,
+	customer_ph_no int null,
+	mode_of_payment varchar(10) null,
+	constraint order_customer_phone_number_fk
+		foreign key (customer_ph_no) references customer (customer_ph_no)
 			on update cascade on delete cascade
 );
 
-create table Current_Inventory
+create table invoice
 (
-	Product_ID int null,
-	Available_Stock int null,
-	Branch_ID int null,
-	constraint Current_Inventory_Branch_Branch_ID_fk
-		foreign key (Branch_ID) references Branch (Branch_ID)
-			on update cascade on delete cascade,
-	constraint Current_Inventory_Product_Product_ID_fk
-		foreign key (Product_ID) references Product (Product_ID)
+	order_id int null,
+	amount_paid int null,
+	change_generated int null,
+	constraint invoice_orders_order_id_fk
+		foreign key (order_id) references orders (order_id)
 			on update cascade on delete cascade
 );
 
-create table Restock_Inventory
+create table membership
 (
-	Warehouse_ID int not null
+	customer_ph_no int null,
+	order_id int null,
+	pts_added_or_redeemed int null,
+	constraint membership_customer_customer_ph_no_fk
+		foreign key (customer_ph_no) references customer (customer_ph_no)
+			on update cascade on delete cascade,
+	constraint membership_orders_order_id_fk
+		foreign key (order_id) references orders (order_id)
+			on update cascade on delete cascade
+);
+
+create table product
+(
+	product_id int not null
 		primary key,
-	Warehouse_Name varchar(20) null,
-	Product_ID int null,
-	Quantity int null,
-	Date date null,
-	constraint Restock_Inventory_Product_Product_ID_fk
-		foreign key (Product_ID) references Product (Product_ID)
+	product_name varchar(15) null,
+	brand varchar(15) null,
+	price int null,
+	available_stock int null,
+	quantity_sold int null,
+	discounted_price int null
 );
 
-create table Staff
+create table ordered_items
 (
-	Staff_ID int not null
+	order_id int null,
+	product_id int null,
+	quantity int null,
+	constraint ordered_items_orders_order_id_fk
+		foreign key (order_id) references orders (order_id)
+			on update cascade on delete cascade,
+	constraint ordered_items_product_product_id_fk
+		foreign key (product_id) references product (product_id)
+			on update cascade on delete cascade
+);
+
+create table sales_return
+(
+	order_id int null,
+	product_id int null,
+	quantity int null,
+	amount_to_pay int null,
+	replacement_order_id int null,
+	constraint sales_return_orders_order_id_fk
+		foreign key (order_id) references orders (order_id)
+			on update cascade on delete cascade,
+	constraint sales_return_orders_order_id_fk_2
+		foreign key (replacement_order_id) references orders (order_id)
+			on update cascade on delete cascade,
+	constraint sales_return_product_product_id_fk
+		foreign key (product_id) references product (product_id)
+			on update cascade on delete cascade
+);
+
+create table staff
+(
+	aadhar_number bigint not null
 		primary key,
-	Job_ID int null,
-	Branch_ID int null,
-	Staff_First_Name varchar(15) null,
-	Staff_Last_Name varchar(15) null,
-	Gender varchar(1) null,
-	constraint Staff_Branch_Branch_ID_fk
-		foreign key (Branch_ID) references Branch (Branch_ID)
-			on update cascade on delete cascade,
-	constraint Staff_Job_Designation_Job_ID_fk
-		foreign key (Job_ID) references Job_Designation (Job_ID)
-			on update cascade on delete cascade
+	first_name varchar(20) null,
+	last_name varchar(20) null,
+	phone_number int null,
+	addr_line_1 varchar(20) null,
+	addr_line_2 varchar(20) null,
+	job_designation varchar(10) null,
+	salary int null,
+	join_date date null
 );
 
-create table Staff_Contact_Info
+create table supplier
 (
-	Staff_ID int null,
-	Address_Line_1 varchar(20) null,
-	Address_Line_2 varchar(20) null,
-	Address_Line_3 varchar(20) null,
-	Phone_Number bigint null,
-	constraint Staff_Contact_Info_Staff_Staff_ID_fk
-		foreign key (Staff_ID) references Staff (Staff_ID)
-			on update cascade on delete cascade
-);
-
-create table Transaction
-(
-	Transaction_ID int not null
+	supplier_ph_no int not null
 		primary key,
-	Payment_ID int null,
-	Date date null,
-	Customer_ID int null,
-	Staff_ID int null,
-	Branch_ID int null,
-	constraint Transaction_Branch_Branch_ID_fk
-		foreign key (Branch_ID) references Branch (Branch_ID)
-			on update cascade on delete cascade,
-	constraint Transaction_Customer_Customer_ID_fk
-		foreign key (Customer_ID) references Customer (Customer_ID),
-	constraint Transaction_Payment_Info_Payment_ID_fk
-		foreign key (Payment_ID) references Payment_Info (Payment_ID)
-			on update cascade on delete cascade,
-	constraint Transaction_Staff_Staff_ID_fk
-		foreign key (Staff_ID) references Staff (Staff_ID)
+	agency_name varchar(20) null,
+	addr_line_2 varchar(20) null,
+	addr_line_1 varchar(20) null
 );
 
-create table Products_Sold
+create table procurement
 (
-	Transaction_ID int null,
-	Product_ID int null,
-	constraint Products_Sold_Product_Product_ID_fk
-		foreign key (Product_ID) references Product (Product_ID)
-			on update cascade on delete cascade,
-	constraint Products_Sold_Transaction_Transaction_ID_fk
-		foreign key (Transaction_ID) references Transaction (Transaction_ID)
+	batch_no int not null
+		primary key,
+	bill_no varchar(10) null,
+	amount_to_pay int null,
+	supplier_ph_no int null,
+	delivery_date int null,
+	constraint procurement_bill_no_uindex
+		unique (bill_no),
+	constraint procurement_supplier_supplier_ph_no_fk
+		foreign key (supplier_ph_no) references supplier (supplier_ph_no)
 			on update cascade on delete cascade
 );
+
+create table procured_items
+(
+	batch_no int null,
+	product_id int null,
+	quantity int null,
+	constraint `procured _items_procurement_batch_no_fk`
+		foreign key (batch_no) references procurement (batch_no)
+			on update cascade on delete cascade,
+	constraint `procured _items_product_product_id_fk`
+		foreign key (product_id) references product (product_id)
+			on update cascade on delete cascade
+);
+
+create table purchase_return
+(
+	batch_no int null,
+	date date null,
+	amount_returned int null,
+	product_id int null,
+	constraint return_purchase_procurement_batch_no_fk
+		foreign key (batch_no) references procurement (batch_no)
+			on update cascade on delete cascade,
+	constraint return_purchase_product_product_id_fk
+		foreign key (product_id) references product (product_id)
+			on update cascade on delete cascade
+);
+
