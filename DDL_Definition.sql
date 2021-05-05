@@ -1,7 +1,6 @@
---Supermarket Management System
 create table customer
 (
-	customer_ph_no int not null
+	customer_ph_no bigint not null
 		primary key,
 	first_name varchar(10) null,
 	last_name varchar(10) null,
@@ -14,9 +13,9 @@ create table orders
 	order_id int not null
 		primary key,
 	order_date date null,
-	customer_ph_no int null,
+	customer_ph_no bigint null,
 	mode_of_payment varchar(10) null,
-	constraint order_customer_phone_number_fk
+	constraint orders_customer_customer_ph_no_fk
 		foreign key (customer_ph_no) references customer (customer_ph_no)
 			on update cascade on delete cascade
 );
@@ -33,7 +32,7 @@ create table invoice
 
 create table membership
 (
-	customer_ph_no int null,
+	customer_ph_no bigint null,
 	order_id int null,
 	pts_added_or_redeemed int null,
 	constraint membership_customer_customer_ph_no_fk
@@ -93,7 +92,7 @@ create table staff
 		primary key,
 	first_name varchar(20) null,
 	last_name varchar(20) null,
-	phone_number int null,
+	phone_number bigint null,
 	addr_line_1 varchar(20) null,
 	addr_line_2 varchar(20) null,
 	job_designation varchar(10) null,
@@ -103,11 +102,11 @@ create table staff
 
 create table supplier
 (
-	supplier_ph_no int not null
+	supplier_ph_no bigint not null
 		primary key,
 	agency_name varchar(20) null,
-	addr_line_2 varchar(20) null,
-	addr_line_1 varchar(20) null
+	addr_line_1 varchar(20) null,
+	addr_line_2 varchar(20) null
 );
 
 create table procurement
@@ -116,7 +115,7 @@ create table procurement
 		primary key,
 	bill_no varchar(10) null,
 	amount_to_pay int null,
-	supplier_ph_no int null,
+	supplier_ph_no bigint null,
 	delivery_date int null,
 	constraint procurement_bill_no_uindex
 		unique (bill_no),
