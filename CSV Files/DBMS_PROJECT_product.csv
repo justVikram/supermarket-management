@@ -1,0 +1,39 @@
+product_id,product_name,brand,price,available_stock,quantity_sold,discounted_price
+1,Jimjam,brittania,10,100,0,0
+2,Cream & Onion,lays,20,100,0,0
+3,Toothbrush,Pepsodent,40,100,0,0
+4,Chakki Atta,Aashirvad,300,100,0,0
+5,Hairdye,Garnier,180,100,0,0
+6,Maggi,Nestle,12,100,0,0
+7,Dishwash,Vim,19,100,0,0
+8,Toothpaste,Colgate,84,100,0,0
+9,HealthDrink,Boost ,730,100,0,0
+10,Ketchup,Nestle,120,100,0,0
+11,Lotion,Himalaya,215,100,0,0
+12,Atta,Ashirvaad,60,100,0,0
+13,Handwash,Lifebuoy,99,100,0,0
+14,Toothbrush,Colgate,101,100,0,0
+15,Biscuits,DarkFantasy,82,100,0,0
+16,Biscuits,Oreo,58,100,0,0
+17,Biscuits,Nice,24,100,0,0
+18,Bhujia,Haldiram,175,100,0,0
+19,PotatoChips,Bingo,20,100,0,0
+20,Coffee,Bru,150,100,0,0
+21,Tea,Red Label,265,100,0,0
+22,Noodles,Sunfeast,123,100,0,0
+23,Vermicelli,Mtr,59,100,0,0
+24,Pasta,Disano,99,100,0,0
+25,Honey,Dabur,250,100,0,0
+26,Choco Spread,Disano,269,100,0,0
+27,Hair Oil,Parachute,120,100,0,0
+28,Shampoo,Dove,430,100,0,0
+29,Shampoo,Nyle,256,100,0,0
+30,Hair Dye,Godrej,120,100,0,0
+31,Lotion,Nivea,192,100,0,0
+32,Deo,Nivea,156,100,0,0
+33,Deo,Axe,193,100,0,0
+34,Sambar masala,Aashirvad,62,100,0,0
+35,Salt,Tata,18,100,0,0
+36,Oil,Safola,168,100,0,0
+37,Cold drink,Minute maid,69,100,0,0
+38,Cold drink,Pepsi,35,100,0,0
