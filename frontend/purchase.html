@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="scripts.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PURCHASE RETURN</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" type="text/css" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <div class="container">
+    <div class="navigation">
+      <ul>
+        <li id="header">
+          <a href="index.html">
+            <span class="icon"><i class="fa fa-shopping-basket" aria-hidden="true"></i></span>
+            <span class="title">
+              <h2>VINAYAK MART</h2>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="index.html">
+            <span class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></span>
+            <span class="title">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="transaction.html">
+            <span class="icon"><i class="fa fa-credit-card-alt" aria-hidden="true"></i></span>
+            <span class="title">New Transaction</span>
+          </a>
+        </li>
+        <li>
+          <a href="orders.html">
+            <span class="icon"><i class="fa fa-cart-plus" aria-hidden="true"></i></span>
+            <span class="title">Place Order</span>
+          </a>
+        </li>
+        <li>
+          <a href="inventory.html">
+            <span class="icon"><i class="fa fa-archive" aria-hidden="true"></i></span>
+            <span class="title">Inventory status</span>
+          </a>
+        </li>
+        <li>
+          <a href="sales.html">
+            <span class="icon"><i class="fa fa-money" aria-hidden="true"></i></span>
+            <span class="title">New sales return</span>
+          </a>
+        </li>
+        <li>
+          <a href="purchase.html">
+            <span class="icon"><i class="fa fa-money" aria-hidden="true"></i></span>
+            <span class="title">New purchase return</span>
+          </a>
+        </li>
+        <li>
+          <a href="customers.html">
+            <span class="icon"><i class="fa fa-users" aria-hidden="true"></i></span>
+            <span class="title">Customers</span>
+          </a>
+        </li>
+        <li>
+          <a href="staffs.html">
+            <span class="icon"><i class="fa fa-id-card" aria-hidden="true"></i></span>
+            <span class="title">Staffs</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="toggle" onclick="toggleMenu();"></div>
+        <div class="user">
+          <img src="user.jpg" />
+        </div>
+      </div>
+
+
+      <!--Purchase return-->
+      <h1 class="pagename">PURCHASE RETURN</h1>
+
+      <div class="container">
+
+        <div class="sales">
+
+          <div class="left-coll">
+            <form action="">
+              <label for="batch">BATCH NO</label>
+              <input type="text" id="batch" name="batch">
+
+              <h3>ADD PRODUCTS :</h3>
+              <label for="category"> CATEGORY</label>
+              <select name="category" id="category">
+                <option value="">Grocery</option>
+                <option value="">Grocery</option>
+                <option value="">Grocery</option>
+                <option value="">Grocery</option>
+              </select>
+              <label for="products"> Product ID</label>
+              <select name="products" id="products">
+                <option value="">P101</option>
+                <option value="">P102</option>
+                <option value="">P103</option>
+                <option value="">P104</option>
+              </select>
+              <label for="">QUANTITY</label>
+              <input type="text" id="date" name="quantity">
+            </form>
+            <input type="submit" class="send-message-cta" value="Add">
+            <input type="submit" class="send-message-cta" value="Clear">
+            <label for="batch">TOTAL AMOUNT TO BE RECIEVED</label>
+            <input type="text" id="batch" name="batch">
+            <input type="submit" class="send-message-cta" value="SAVE">
+            <input type="submit" class="send-message-cta" value="DISCARD">
+
+          </div>
+
+          <div class="right-coll">
+
+            <div class="details">
+              <label for="">DATE</label>
+              <input type="text" id="date" name="date">
+              <div class="recentProducts">
+                <div class="cardHeaderpurchase">
+                  <h2>PRODUCTS</h2>
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <td>ID</td>
+                      <td>Name</td>
+                      <td>Price</td>
+                      <td>Quantity</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>PD01</td>
+                      <td>MILK</td>
+                      <td>Rs.999</td>
+                      <td>10</td>
+                    </tr>
+                    <tr>
+                      <td>PD01</td>
+                      <td>MILK</td>
+                      <td>Rs.999</td>
+                      <td>10</td>
+                    </tr>
+                    <tr>
+                      <td>PD01</td>
+                      <td>MILK</td>
+                      <td>Rs.999</td>
+                      <td>10</td>
+                    </tr>
+                    <tr>
+                      <td>PD01</td>
+                      <td>MILK</td>
+                      <td>Rs.999</td>
+                      <td>10</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+
+</body>
+
+</html>
