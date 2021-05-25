@@ -1,0 +1,203 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <script src="{% static 'scripts.js' %}"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Place Order</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <div class="container">
+    <div class="navigation">
+      <ul>
+        <li id="header">
+          <a href="/admin">
+            <span class="icon"><i class="fa fa-shopping-basket" aria-hidden="true"></i></span>
+            <span class="title">
+              <h2>VINAYAK MART</h2>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="/">
+            <span class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></span>
+            <span class="title">Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="/transaction">
+            <span class="icon"><i class="fa fa-credit-card-alt" aria-hidden="true"></i></span>
+            <span class="title">New Transaction</span>
+          </a>
+        </li>
+        <li>
+          <a href="/order">
+            <span class="icon"><i class="fa fa-cart-plus" aria-hidden="true"></i></span>
+            <span class="title">Place Order</span>
+          </a>
+        </li>
+        <li>
+          <a href="/inventory">
+            <span class="icon"><i class="fa fa-archive" aria-hidden="true"></i></span>
+            <span class="title">Inventory status</span>
+          </a>
+        </li>
+        <li>
+          <a href="/sales">
+            <span class="icon"><i class="fa fa-money" aria-hidden="true"></i></span>
+            <span class="title">New sales return</span>
+          </a>
+        </li>
+        <li>
+          <a href="/purchase">
+            <span class="icon"><i class="fa fa-money" aria-hidden="true"></i></span>
+            <span class="title">New purchase return</span>
+          </a>
+        </li>
+        <li>
+          <a href="/customer">
+            <span class="icon"><i class="fa fa-users" aria-hidden="true"></i></span>
+            <span class="title">Customers</span>
+          </a>
+        </li>
+        <li>
+          <a href="/staff">
+            <span class="icon"><i class="fa fa-id-card" aria-hidden="true"></i></span>
+            <span class="title">Staffs</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <div class="toggle" onclick="toggleMenu();"></div>
+        <div class="user">
+          <img src="{% static 'user.jpg' %}" />
+        </div>
+      </div>
+
+      <!--PLACE ORDER-->
+      <h1 class="pagename">PLACE ORDER</h1>
+
+      <div class="container">
+
+        <div class="sales">
+
+          <div class="left-coll">
+
+            <form action="/order" method="post">
+                {% csrf_token %}
+
+                <label for="batch_no">BATCH NO</label>
+              <input type="int" id="batch_no" name="batch_no">
+              <label for="bill_no">BILL NO</label>
+              <input type="text" id="bill_no" name="bill_no">
+              <label for="agency"> AGENCY</label>
+              <select name="agency" id="agency">
+                <option value="">Agency 1</option>
+                <option value="">Agency 2</option>
+                <option value="">Agency 3</option>
+                <option value="">Agency 4</option>
+              </select>
+
+              <h3>ADD PRODUCTS :</h3>
+              <label for="brand"> BRAND</label>
+              <select name="brand" id="brand">
+                <option value="">Brand 1</option>
+                <option value="">Brand 2</option>
+                <option value="">Brand 3</option>
+                <option value="">Brand 4</option>
+              </select>
+              <label for="product_id"> Product ID</label>
+              <select name="product_id" id="product_id">
+                <option value="1">P101</option>
+                <option value="2">P102</option>
+                <option value="3">P103</option>
+                <option value="4">P104</option>
+              </select>
+              <label for=quantity">QUANTITY</label>
+              <input type="number" id="quantity" name="quantity">
+              <input type="submit" class="send-message-cta" value="ADD">
+              <input type="submit" class="send-message-cta" value="CLEAR">
+
+            <label for="total_amount">TOTAL AMOUNT</label>
+            <input type="number" id="total_amount" name="total_amount">
+            <label for="delivery_date">DELIVERY DATE</label>
+            <input type="text" id="delivery_date" name="delivery_date">
+            <input type="submit" class="send-message-cta" value="SAVE">
+            <input type="submit" class="send-message-cta" value="DISCARD">
+            </form>
+          </div>
+
+          <div class="right-coll">
+
+            <div class="details">
+              <label for="">DATE</label>
+              <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}">
+              <label for="">SUPPLIER PHONE NO.</label>
+              <input type="text" id="date" name="date">
+              <label for="">SUPPLIER ADDRESS</label>
+              <input type="text" id="date" name="date">
+              <div class="recentProducts">
+                <div class="cardHeaderpurchase">
+                  <h2>PRODUCTS</h2>
+
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <td>ID</td>
+                      <td>Name</td>
+                      <td>Price</td>
+                      <td>Quantity</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>PD01</td>
+                      <td>MILK</td>
+                      <td>Rs.999</td>
+                      <td>10</td>
+                    </tr>
+                    <tr>
+                      <td>PD01</td>
+                      <td>MILK</td>
+                      <td>Rs.999</td>
+                      <td>10</td>
+                    </tr>
+                    <tr>
+                      <td>PD01</td>
+                      <td>MILK</td>
+                      <td>Rs.999</td>
+                      <td>10</td>
+                    </tr>
+                    <tr>
+                      <td>PD01</td>
+                      <td>MILK</td>
+                      <td>Rs.999</td>
+                      <td>10</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</body>
+
+</html>
