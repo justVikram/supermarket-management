@@ -311,7 +311,7 @@ body {
     left: 0;
   }
   .main.active {
-    width: calc(100%-300px);
+    width: calc(100%- 300px);
     left: 300px;
   }
   .cardBox {

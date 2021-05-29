@@ -99,10 +99,10 @@
               <h3>PRODUCTS RETURNED :</h3>
               <label for="product"> Product ID</label>
               <select name="product" id="product">
-                <option value="001">P101</option>
-                <option value="002">P102</option>
-                <option value="003">P103</option>
-                <option value="004">P104</option>
+              <option disabled selected="true"> --Select -- </option>
+                  {% for pid in AllProductIDs %}
+                <option value="{{ pid.product_id }}">{{ pid.brand }} - {{ pid.product_name }}</option>
+                  {% endfor %}
               </select>
 
               <label for="">QUANTITY</label>
@@ -114,7 +114,7 @@
             <label for="batch">REPLACEMENT ORDER ID</label>
             <input type="text" id="r_order_id" name="r_order_id">
             <label for="text">AMOUNT TO BE RETURNED</label>
-            <input type="text" id="amount" name="amount">
+            <input type="text" id="amount" name="amount" value="0">
 
                 <input type="submit" class="send-message-cta" value="SAVE">
             <input type="submit" class="send-message-cta" value="DISCARD">
@@ -126,7 +126,7 @@
 
             <div class="details">
               <label for="">DATE</label>
-              <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}">
+              <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}" disabled>
               <div class="recentProducts">
                 <div class="cardHeaderpurchase">
                   <h2>PRODUCTS</h2>

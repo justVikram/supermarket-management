@@ -1,5 +1,11 @@
 from django.urls import path
 from . import views
+from django.contrib import admin
+
+admin.site.site_header = "Vinayak Mart Administration"
+admin.site.site_title = "Database"
+admin.site.index_title = "Application Database"
+
 urlpatterns = [
     path('', views.dashboard, name='dashboard'),
     path('customer', views.customer, name='customer'),
@@ -9,4 +15,5 @@ urlpatterns = [
     path('sales', views.sales_return, name='sales_return'),
     path('staff', views.staff, name='staff'),
     path('transaction', views.transaction, name='new_transaction'),
+    path('loadproductdetails', views.show_added_products, name='load_products')
 ]

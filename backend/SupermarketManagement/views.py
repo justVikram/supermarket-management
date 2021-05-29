@@ -1,8 +1,8 @@
 import datetime
-
+from django.http import JsonResponse
 from django.shortcuts import render
 from SupermarketManagement import models
-
+from django.db.models import Sum
 
 def dashboard(request):
     AllOrders = models.Order.objects.filter(order_date=datetime.date.today())
@@ -15,7 +15,6 @@ def dashboard(request):
     for product in products_sold:
         product_reqd = models.Product.objects.get(product_id=product.product_id)
         income = income + product.quantity * product_reqd.price
-
 
     procured_items = models.ProcuredItems.objects.all()
     expense = 0
@@ -37,13 +36,18 @@ def customer(request):
 
 
 def inventory(request):
-    AllProducts = models.Product.objects.all()
+    AllProducts = models.Product.objects.filter(available_stock__gt=10)
     context = {'products' : AllProducts}
 
     return render(request, 'inventory.html', context)
 
 
 def order(request):
+
+    AllAgencies = models.Supplier.objects.order_by('supplier_ph_no').distinct()
+    AllBrands = models.Product.objects.order_by('brand').values_list('brand', flat=True).distinct()
+    context = {'AllAgencies': AllAgencies, 'AllBrands': AllBrands}
+
     if request.method == "POST":
         batch_no = request.POST["batch_no"]
         bill_no = request.POST["bill_no"]
@@ -59,10 +63,12 @@ def order(request):
         obj_procurement.save()
         obj_procureditems.save()
 
-    return render(request, 'orders.html')
+    return render(request, 'orders.html', context)
 
 
 def purchase_return(request):
+    AllBrands = models.Product.objects.order_by('brand').values_list('brand', flat=True).distinct()
+    context = {'AllBrands': AllBrands}
     if request.method == "POST":
         batch_no = request.POST["batch_no"]
         product_id = request.POST['product_id']
@@ -73,57 +79,128 @@ def purchase_return(request):
                                                    amount_returned=amount_returned, date=date)
         obj_purchasereturn.save()
 
-    return render(request, 'purchase.html')
+        models.Product.objects.filter(product_id=product_id).update(available_stock=0)
+
+    return render(request, 'purchase.html', context)
 
 
 def sales_return(request):
+
+    AllProductIDs = models.Product.objects.order_by('brand')
+    context = {'AllProductIDs': AllProductIDs}
+
     if request.method == "POST":
         product_id = request.POST['product']
         quantity = request.POST['quantity']
         order_id = request.POST['order_id']
         replacement_order_id = request.POST['r_order_id']
         amount_to_pay = request.POST['amount']
+
         obj = models.SalesReturn(product_id=product_id, quantity=quantity, order_id=order_id,
                                  replacement_order_id=replacement_order_id, amount_to_pay=amount_to_pay)
         obj.save()
-        print("Data has been saved")
-    return render(request, 'sales.html')
+
+        if not amount_to_pay == 0:
+            old = models.Product.objects.filter(product_id=product_id)
+            newstock = int(old.get().available_stock) + int(quantity)
+            models.Product.objects.filter(product_id=product_id).update(available_stock=newstock)
+            newquantity = int(old.get().quantity_sold) - int(quantity)
+            models.Product.objects.filter(product_id=product_id).update(quantity_sold=newquantity)
+
+    return render(request, 'sales.html', context)
 
 
 def staff(request):
     AllStaffs = models.Staff.objects.all()
-    context = {'AllStaffs' : AllStaffs}
+    context = {'AllStaffs': AllStaffs}
     return render(request, 'staffs.html', context)
 
 
 def transaction(request):
+
+    AllBrands = models.Product.objects.order_by('brand').values_list('brand', flat=True).distinct()
+
+    AllProducts = models.Product.objects.order_by('product_name').all()
+
+    ProductsToBeDisplayed = models.Product.objects.order_by('product_id').all()
+
+    next_order_id = models.Order.objects.count() + 1
+
+    AllStaffs = models.Staff.objects.all().order_by('staff_id')
+
+    context = {'AllBrands': AllBrands, 'next_order_id': next_order_id, 'AllStaffs': AllStaffs,
+               'AllProducts': AllProducts, 'ProductsToDisplay': ProductsToBeDisplayed}
+
     if request.method == "POST":
-        order_id = request.POST["order_id"]
+        order_id = next_order_id
         staff_id = request.POST['staff_id']
         customer_ph_no = request.POST['customer_ph_no']
-        brand = request.POST['brand']
         product_id = request.POST['product_id']
         quantity = request.POST['quantity']
         mode_of_payment = request.POST['mode_of_payment']
         amount_paid = request.POST['amount_to_pay']
-        change_generated = request.POST['change_generated']
-        pts_added_or_redeemed = request.POST['pts_added']
+        pts_added_or_redeemed = float(amount_paid) * 0.1
+
+        models.Membership.objects.filter(customer_ph_no=customer_ph_no).delete()
 
         obj_orders = models.Order(staff_id=staff_id, customer_ph_no=customer_ph_no, order_id=order_id,
                                   mode_of_payment=mode_of_payment, order_date=datetime.date.today())
-        obj_ordereditems = models.OrderedItems(order_id=order_id,
-                                               product_id=product_id, quantity=quantity)
 
         obj_invoice = models.Invoice(order_id=order_id, amount_paid=amount_paid,
-                                     change_generated=change_generated)
+                                     change_generated=0)
 
         obj_membership = models.Membership(customer_ph_no=customer_ph_no, order_id=order_id,
                                            pts_added_or_redeemed = pts_added_or_redeemed)
 
+        obj_customer = models.Customer(customer_ph_no=customer_ph_no)
+
+        if not models.Customer.objects.filter(customer_ph_no=customer_ph_no).exists():
+            obj_customer.save()
+
+        old = models.Product.objects.filter(product_id=product_id)
+        newstock = int(old.get().available_stock) - int(quantity)
+        models.Product.objects.filter(product_id=product_id).update(available_stock=newstock)
+        newquantity = int(old.get().quantity_sold) + int(quantity)
+        models.Product.objects.filter(product_id=product_id).update(quantity_sold=newquantity)
+
         obj_orders.save()
-        obj_ordereditems.save()
+        models.OrderedItems.objects.filter(order_id=next_order_id-1).update(order_id=next_order_id)
         obj_invoice.save()
         obj_membership.save()
         print("Data has been saved")
 
-    return render(request, 'transaction.html')
+        global amount
+        amount = 0
+
+    return render(request, 'transaction.html', context)
+
+
+amount = 0
+
+def show_added_products(request):
+    if request.method == 'POST':
+        product_id = request.POST['product_id']
+        quantity = request.POST['quantity']
+        ph_no = request.POST['ph_no']
+        price = int(models.Product.objects.get(product_id=product_id).price)
+        name = models.Product.objects.get(product_id=product_id).product_name
+        next_order_id = models.Order.objects.count()
+        order_id = next_order_id
+
+        global amount
+        amount += price*int(quantity)
+
+        pts = list(models.Membership.objects.filter(customer_ph_no=ph_no).aggregate(Sum('pts_added_or_redeemed')).values())[0]
+
+        obj_ordereditem = models.OrderedItems(order_id=order_id, quantity=quantity, product_id=product_id)
+        obj_ordereditem.save()
+
+        data = {
+            'quantity': quantity,
+            'pname': name,
+            'price': price,
+            'product_id': product_id,
+            'amount': amount,
+            'points': pts
+        }
+        return JsonResponse(data)

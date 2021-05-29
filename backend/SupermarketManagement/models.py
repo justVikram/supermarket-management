@@ -26,7 +26,7 @@ class Customer(models.Model):
     addr_line_2 = models.CharField(max_length=25)
 
     def __str__(self):
-        return str(self.first_name + ' ' + self.last_name)
+        return str(str(self.customer_ph_no) + ' - ' + self.first_name + ' ' + self.last_name)
 
 
 class Membership(models.Model):

@@ -101,19 +101,23 @@
               <input type="text" id="bill_no" name="bill_no">
               <label for="agency"> AGENCY</label>
               <select name="agency" id="agency">
-                <option value="">Agency 1</option>
-                <option value="">Agency 2</option>
-                <option value="">Agency 3</option>
-                <option value="">Agency 4</option>
+              <option disabled selected="true"> --Select -- </option>
+                  {% for agency in AllAgencies %}
+
+                <option value="">{{ agency.agency_name }}</option>
+
+                  {% endfor %}
+
               </select>
 
               <h3>ADD PRODUCTS :</h3>
               <label for="brand"> BRAND</label>
               <select name="brand" id="brand">
-                <option value="">Brand 1</option>
-                <option value="">Brand 2</option>
-                <option value="">Brand 3</option>
-                <option value="">Brand 4</option>
+              <option disabled selected="true"> --Select -- </option>
+                  {% for brand in AllBrands %}
+                <option value="">{{brand}}</option>
+                  {% endfor %}
+
               </select>
               <label for="product_id"> Product ID</label>
               <select name="product_id" id="product_id">
@@ -140,11 +144,11 @@
 
             <div class="details">
               <label for="">DATE</label>
-              <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}">
+              <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}" disabled>
               <label for="">SUPPLIER PHONE NO.</label>
-              <input type="text" id="date" name="date">
+              <input type="text" id="date" name="date" disabled>
               <label for="">SUPPLIER ADDRESS</label>
-              <input type="text" id="date" name="date">
+              <input type="text" id="date" name="date" disabled>
               <div class="recentProducts">
                 <div class="cardHeaderpurchase">
                   <h2>PRODUCTS</h2>

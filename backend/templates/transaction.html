@@ -6,6 +6,7 @@
   <script src="{% static 'scripts.js' %}"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>New Transaction</title>
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
   <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
 </head>
@@ -95,36 +96,55 @@
             <form action="/transaction" method = "post">
                 {% csrf_token %}
                 <label for="order_id">ORDER ID</label>
-              <input type="number" id="order_id" name="order_id">
+              <input type="number" id="order_id" name="order_id" value="{{ next_order_id }}" disabled>
+
               <label for="staff_id">BILLED BY</label>
-              <input type="number" id="staff_id" name="staff_id">
+
+            <select name="staff_id" id="staff_id">
+            <option disabled selected="true"> --Select -- </option>
+
+                {% for staff in AllStaffs %}
+                <option value="{{ staff.staff_id }}"> {{ staff.first_name }} - {{ staff.staff_id }}</option>
+                    {% endfor %}
+              </select>
+
               <label for="customer_ph_no">CUSTOMER PHONE NO.</label>
               <input type="number" id="customer_ph_no" name="customer_ph_no">
 
               <h3>ADD PRODUCTS :</h3>
               <label for="brand"> BRAND</label>
-              <select name="brand" id="brand">
-                <option value="Maggi">Maggi</option>
-                <option value="Sunfeast">Sunfeast</option>
-                <option value="">Grocery</option>
-                <option value="">Grocery</option>
+
+                <select name="brand" id="brand">
+
+                <option disabled selected="true"> --Select -- </option>
+
+                    {% for brand in AllBrands %}
+                <option value="1"> {{ brand }}</option>
+                    {% endfor %}
+
               </select>
+
               <label for="product_id"> Product ID</label>
-              <select name="product_id" id="product_id">
-                <option value="01">P101</option>
-                <option value="02">P102</option>
-                <option value="03">P103</option>
-                <option value="04">P104</option>
+
+                <select name="product_id" id="product_id">
+
+                <option disabled selected="true"> --Select -- </option>
+
+                  {% for product in AllProducts %}
+                <option value="{{ product.product_id }}"> {{ product.product_name }}</option>
+                    {% endfor %}
+
               </select>
+
               <label for="quantity">QUANTITY</label>
               <input type="number" id="quantity" name="quantity">
-              <input type="submit" class="send-message-cta" value="ADD">
-              <input type="submit" class="send-message-cta" value="CLEAR">
+
+              <input type="button" id="add" pid="10" class="send-message-cta" value="ADD">
 
             <label for="total_amount">TOTAL AMOUNT</label>
-            <input type="number" id="total_amount" name="total_amount">
+            <input type="number" id="total_amount" name="total_amount" disabled>
             <label for="pts_redeemed">POINTS REDEEMED</label>
-            <input type="number" id="pts_redeemed" name="pts_redeemed">
+            <input type="number" id="pts_redeemed" name="pts_redeemed" disabled>
             <label for="amount_to_pay">AMOUNT TO PAY</label>
             <input type="number" id="amount_to_pay" name="amount_to_pay">
             <h2>MODE OF PAYMENT</h2>
@@ -133,25 +153,20 @@
               <option value="CASH">CARD</option>
               <option value="CARD">CASH</option>
             </select>
-            <label for="change_generated">CHANGE GENERATED</label>
-            <input type="number" id="change_generated" name="change_generated">
-            <label for="pts_added">POINTS ADDED TO ACCOUNT</label>
-            <input type="number" id="pts_added" name="pts_added">
             <input type="submit" class="send-message-cta" value="SAVE">
-            <input type="submit" class="send-message-cta" value="DISCARD">
             </form>
           </div>
 
           <div class="right-coll">
             <div class="details">
               <label for="">DATE</label>
-              <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}">
+              <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}" disabled>
               <div class="recentProducts">
                 <div class="cardHeaderpurchase">
                   <h2>PRODUCTS</h2>
 
                 </div>
-                <table>
+                <table id="showdata">
                   <thead>
                     <tr>
                       <td>ID</td>
@@ -162,28 +177,7 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
+
                     </tr>
                   </tbody>
                 </table>
@@ -199,5 +193,7 @@
       </div>
     </div>
   </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'logic.js' %}"></script>
 </body>
 </html>

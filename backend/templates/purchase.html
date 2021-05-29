@@ -99,12 +99,14 @@
               <input type="text" id="batch_no" name="batch_no">
 
               <h3>ADD PRODUCTS :</h3>
-              <label for="category"> CATEGORY</label>
+              <label for="category"> BRAND</label>
               <select name="category" id="category">
-                <option value="">Grocery</option>
-                <option value="">Grocery</option>
-                <option value="">Grocery</option>
-                <option value="">Grocery</option>
+              <option disabled selected="true"> --Select -- </option>
+                {% for brand in AllBrands %}
+
+                <option value="1"> {{ brand }}</option>
+                    {% endfor %}
+
               </select>
               <label for="product_id"> Product ID</label>
               <select name="product_id" id="product_id">
@@ -127,7 +129,7 @@
 
             <div class="details">
               <label for="">DATE</label>
-              <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}">
+              <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}" disabled>
               <div class="recentProducts">
                 <div class="cardHeaderpurchase">
                   <h2>PRODUCTS</h2>
