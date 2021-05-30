@@ -6,9 +6,13 @@ from django.db.models import Sum
 from django.core import serializers
 
 procurement_amount = 0
-count = 0
+sales_return_amount = 0
 
+count = 0
 count_txn = 0
+count_sales = 0
+
+total_sales_amount = 0
 
 def dashboard(request):
     AllOrders = models.Order.objects.filter(order_date=datetime.date.today())
@@ -99,22 +103,13 @@ def sales_return(request):
     context = {'AllOrders': AllOrders}
 
     if request.method == "POST":
-        product_id = request.POST['product']
-        quantity = request.POST['quantity']
         order_id = request.POST['order_id']
         replacement_order_id = request.POST['r_order_id']
-        amount_to_pay = request.POST['amount']
 
-        obj = models.SalesReturn(product_id=product_id, quantity=quantity, order_id=order_id,
-                                 replacement_order_id=replacement_order_id, amount_to_pay=amount_to_pay)
-        obj.save()
+        models.SalesReturn.objects.filter(order_id=order_id).update(replacement_order_id=replacement_order_id)
 
-        if not amount_to_pay == 0:
-            old = models.Product.objects.filter(product_id=product_id)
-            newstock = int(old.get().available_stock) + int(quantity)
-            models.Product.objects.filter(product_id=product_id).update(available_stock=newstock)
-            newquantity = int(old.get().quantity_sold) - int(quantity)
-            models.Product.objects.filter(product_id=product_id).update(quantity_sold=newquantity)
+        global total_sales_amount
+        total_sales_amount = 0
 
     return render(request, 'sales.html', context)
 
@@ -315,9 +310,44 @@ def chained_dropdown_sales(request):
         order_id = request.POST['order_id']
         print(order_id)
 
-        sort_by_order = list(models.OrderedItems.objects.filter(order_id=order_id).order_by('product_id').values('product_id', 'product_name'))
+        sort_by_order = list(models.OrderedItems.objects.filter(order_id=order_id).order_by('product_id').values('product_id'))
 
         data = {
             'SortByOrder': sort_by_order
+        }
+        return JsonResponse(data)
+
+
+def show_added_products_sales(request):
+    if request.method == "POST":
+        product_id = request.POST['product_id']
+        quantity = request.POST['quantity']
+        order_id = request.POST['order_id']
+        price = int(models.Product.objects.get(product_id=product_id).price)
+        name = models.Product.objects.get(product_id=product_id).product_name
+
+        global sales_return_amount
+        sales_return_amount += price * int(quantity)
+
+        global total_sales_amount
+        total_sales_amount += sales_return_amount
+
+        obj = models.SalesReturn(product_id=product_id, quantity=quantity, order_id=order_id,
+                                 amount_to_pay=sales_return_amount)
+        obj.save()
+
+        old = models.Product.objects.filter(product_id=product_id)
+        newstock = int(old.get().available_stock) + int(quantity)
+        models.Product.objects.filter(product_id=product_id).update(available_stock=newstock)
+        newquantity = int(old.get().quantity_sold) - int(quantity)
+        models.Product.objects.filter(product_id=product_id).update(quantity_sold=newquantity)
+
+        data = {
+            'quantity': quantity,
+            'pname': name,
+            'price': price,
+            'product_id': product_id,
+            'total_sales_amount': total_sales_amount,
+            'sales_return_amount': sales_return_amount
         }
         return JsonResponse(data)

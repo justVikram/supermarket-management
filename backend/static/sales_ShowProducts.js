@@ -20,41 +20,42 @@ function csrfSafeMethod(method) {
     return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
 }
 
-$('#order_id').change(function () {
+
+$("#add").click(function (){
 
     $.ajaxSetup({
-        beforeSend: function (xhr, settings) {
+        beforeSend: function(xhr, settings) {
             if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
         }
-    })
+    });
 
+    var pid = $('#product_id').val()
+    var qty = $('#quantity').val()
     var order_id = $('#order_id').val()
 
     $.ajax({
         type: "POST",
-        url: "/chaineddropdownsales",
+        url: "/show_added_products_sales",
         data:{
-            "order_id": order_id,
+            "product_id": pid,
+            "quantity": qty,
+            "order_id": order_id
+        }, success: function (data){
+
+            var instance = data;
+            $("#total_amount").val(instance.total_sales_amount)
+            $("#showdata tbody").prepend(
+                `<tr>
+                    <td>${instance.product_id || ""}</td>
+                    <td>${instance.pname || ""}</td>
+                    <td>${instance.price || ""}</td>
+                    <td>${instance.quantity || ""}</td>
+                    <td>${instance.sales_return_amount || ""}</td>
+                </tr>`
+            )
+            console.log(data)
         },
-        success: function (data){
-            console.log(data);
-
-            // Add below snippet no
-            let productSelectBox = $('#product_id');
-
-            document.getElementById('product_id').innerText = null;
-
-            const productsData = data.SortByOrder;
-            $.each(productsData, function(idx, product) {
-                let productOption = $("<option/>", {
-                    value: product.product_id,
-                    text: product.product_id
-                });
-
-                productSelectBox.append(productOption);
-            });
-        }
     })
-});
+})

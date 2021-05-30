@@ -107,23 +107,23 @@
 
 
               <h3>PRODUCTS RETURNED :</h3>
-              <label for="product"> Product ID</label>
-              <select name="product" id="product">
-              <option disabled selected="true"> --Select -- </option>
-                  {% for pid in AllProductIDs %}
-                <option value="{{ pid.product_id }}">{{ pid.brand }} - {{ pid.product_name }}</option>
-                  {% endfor %}
+              <label for="product_id">PRODUCT NAME</label>
+
+                <select name="product_id" id="product_id">
+
+                <option disabled selected="true"> --Select -- </option>
+
               </select>
 
               <label for="">QUANTITY</label>
               <input type="text" id="quantity" name="quantity">
 
-            <input type="button" class="send-message-cta" value="Add">
+            <input type="button" id="add" class="send-message-cta" value="ADD">
 
             <label for="batch">REPLACEMENT ORDER ID</label>
             <input type="text" id="r_order_id" name="r_order_id">
             <label for="text">AMOUNT TO BE RETURNED</label>
-            <input type="text" id="amount" name="amount" value="0">
+            <input type="text" id="total_amount" name="total_amount">
 
                 <input type="submit" class="send-message-cta" value="SAVE">
 
@@ -146,6 +146,7 @@
                       <td>Name</td>
                       <td>Price</td>
                       <td>Quantity</td>
+                        <td> Total </td>
                     </tr>
                   </thead>
                   <tbody>
@@ -168,8 +169,8 @@
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="{% static 'order_ShowProducts.js' %}"></script>
-<script src="{% static 'order_ChainedDropdown.js' %}"></script>
+<script src="{% static 'sales_ChainedDropdown.js' %}"></script>
+<script src="{% static 'sales_ShowProducts.js' %}"></script>
 
 </body>
 
