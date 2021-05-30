@@ -15,5 +15,9 @@ urlpatterns = [
     path('sales', views.sales_return, name='sales_return'),
     path('staff', views.staff, name='staff'),
     path('transaction', views.transaction, name='new_transaction'),
-    path('loadproductdetails', views.show_added_products, name='load_products')
+    path('loadproductdetails', views.show_added_products, name='load_products'),
+    path('changeddropdown', views.chained_dropdown, name='chained_dropdown'),
+    path('showsupplierinfo', views.show_supplier_info, name='show_supplier_info'),
+    path('show_added_products_orders', views.show_added_products_orders, name='show_added_products_orders'),
+    path('changeddropdownorders', views.chained_dropdown_orders, name='changeddropdownorders')
 ]

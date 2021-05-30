@@ -24,14 +24,14 @@ function csrfSafeMethod(method) {
 $("#add").click(function (){
 
     $.ajaxSetup({
-    beforeSend: function(xhr, settings) {
-        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
         }
-    }
-});
+    });
 
-    var pid =  $('#product_id').val()
+    var pid = $('#product_id').val()
     var qty = $('#quantity').val()
     var ph_no = $('#customer_ph_no').val()
 

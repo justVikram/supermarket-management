@@ -119,20 +119,16 @@
                 <option disabled selected="true"> --Select -- </option>
 
                     {% for brand in AllBrands %}
-                <option value="1"> {{ brand }}</option>
+                <option value="{{ brand }}"> {{ brand }}</option>
                     {% endfor %}
 
               </select>
 
-              <label for="product_id"> Product ID</label>
+              <label for="product_id">PRODUCT NAME</label>
 
                 <select name="product_id" id="product_id">
 
                 <option disabled selected="true"> --Select -- </option>
-
-                  {% for product in AllProducts %}
-                <option value="{{ product.product_id }}"> {{ product.product_name }}</option>
-                    {% endfor %}
 
               </select>
 
@@ -194,6 +190,7 @@
     </div>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="{% static 'logic.js' %}"></script>
+<script src="{% static 'transaction_ShowProducts.js' %}"></script>
+<script src="{% static 'transaction_ChainedDropdown.js' %}"></script>
 </body>
 </html>

@@ -3,6 +3,10 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from SupermarketManagement import models
 from django.db.models import Sum
+from django.core import serializers
+
+procurement_amount = 0
+count = 0
 
 def dashboard(request):
     AllOrders = models.Order.objects.filter(order_date=datetime.date.today())
@@ -51,17 +55,20 @@ def order(request):
     if request.method == "POST":
         batch_no = request.POST["batch_no"]
         bill_no = request.POST["bill_no"]
-        product_id = request.POST['product_id']
-        quantity = request.POST['quantity']
         amount_to_pay = request.POST['total_amount']
         delivery_date = request.POST['delivery_date']
+        agency = request.POST['agency']
 
-        obj_procurement = models.Procurement(batch_no=batch_no, bill_no=bill_no, amount_to_pay=amount_to_pay,
-                                             delivery_date=delivery_date)
-        obj_procureditems = models.ProcuredItems(product_id=product_id, batch_no=batch_no, quantity=quantity)
+        ph_no = models.Supplier.objects.filter(agency_name=agency).get().supplier_ph_no
 
-        obj_procurement.save()
-        obj_procureditems.save()
+        models.Procurement.objects.filter(batch_no=batch_no).update(bill_no=bill_no, amount_to_pay=amount_to_pay,
+                                                                    delivery_date=delivery_date, supplier_ph_no=ph_no)
+
+        global procurement_amount
+        procurement_amount = 0
+
+        global count
+        count = 0
 
     return render(request, 'orders.html', context)
 
@@ -150,7 +157,7 @@ def transaction(request):
                                      change_generated=0)
 
         obj_membership = models.Membership(customer_ph_no=customer_ph_no, order_id=order_id,
-                                           pts_added_or_redeemed = pts_added_or_redeemed)
+                                           pts_added_or_redeemed=pts_added_or_redeemed)
 
         obj_customer = models.Customer(customer_ph_no=customer_ph_no)
 
@@ -177,6 +184,7 @@ def transaction(request):
 
 amount = 0
 
+
 def show_added_products(request):
     if request.method == 'POST':
         product_id = request.POST['product_id']
@@ -190,7 +198,8 @@ def show_added_products(request):
         global amount
         amount += price*int(quantity)
 
-        pts = list(models.Membership.objects.filter(customer_ph_no=ph_no).aggregate(Sum('pts_added_or_redeemed')).values())[0]
+        pts = list(models.Membership.objects.filter(customer_ph_no=ph_no).aggregate
+                   (Sum('pts_added_or_redeemed')).values())[0]
 
         obj_ordereditem = models.OrderedItems(order_id=order_id, quantity=quantity, product_id=product_id)
         obj_ordereditem.save()
@@ -202,5 +211,80 @@ def show_added_products(request):
             'product_id': product_id,
             'amount': amount,
             'points': pts
+        }
+        return JsonResponse(data)
+
+
+def chained_dropdown(request):
+    if request.method == "POST":
+        brand = request.POST['brand']
+        print(brand)
+
+        sort_by_brand = list(models.Product.objects.filter(brand=brand).order_by('product_id').values('product_id', 'product_name'))
+
+        data = {
+            'SortByBrand': sort_by_brand
+        }
+        return JsonResponse(data)
+
+
+def show_supplier_info(request):
+    if request.method == "POST":
+        agency = request.POST['agency']
+        print(agency)
+
+        SupplierInfo = models.Supplier.objects.filter(agency_name=agency).get()
+        SupplierPhNo = SupplierInfo.supplier_ph_no
+        SupplierAddr = SupplierInfo.addr_line_1
+
+        data = {
+            'ph_no': SupplierPhNo,
+            'addr': SupplierAddr,
+        }
+
+        return JsonResponse(data)
+
+
+def show_added_products_orders(request):
+    if request.method == 'POST':
+        product_id = request.POST['product_id']
+        quantity = request.POST['quantity']
+        batch_no = request.POST['batch_no']
+        price = int(models.Product.objects.get(product_id=product_id).price)
+        name = models.Product.objects.get(product_id=product_id).product_name
+
+        global procurement_amount
+        procurement_amount += price*int(quantity)
+
+        global count
+        count = count + 1
+
+        if count == 1:
+            obj_procurement = models.Procurement(batch_no=batch_no, delivery_date=datetime.date.today())
+            obj_procurement.save()
+
+
+        obj_procureditem = models.ProcuredItems(product_id=product_id, quantity=quantity, batch_no=batch_no)
+        obj_procureditem.save()
+
+        data = {
+            'quantity': quantity,
+            'pname': name,
+            'price': price,
+            'product_id': product_id,
+            'amount': procurement_amount,
+        }
+        return JsonResponse(data)
+
+
+def chained_dropdown_orders(request):
+    if request.method == "POST":
+        brand = request.POST['brand']
+        print(brand)
+
+        sort_by_brand = list(models.Product.objects.filter(brand=brand).order_by('product_id').values('product_id', 'product_name'))
+
+        data = {
+            'SortByBrand': sort_by_brand
         }
         return JsonResponse(data)
