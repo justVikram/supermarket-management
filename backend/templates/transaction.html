@@ -95,8 +95,9 @@
           <div class="left-coll">
             <form action="/transaction" method = "post">
                 {% csrf_token %}
+
                 <label for="order_id">ORDER ID</label>
-              <input type="number" id="order_id" name="order_id" value="{{ next_order_id }}" disabled>
+            <input type="number" id="order_id" name="order_id" value = "{{ next_order_id }}" disabled>
 
               <label for="staff_id">BILLED BY</label>
 
@@ -138,7 +139,7 @@
               <input type="button" id="add" pid="10" class="send-message-cta" value="ADD">
 
             <label for="total_amount">TOTAL AMOUNT</label>
-            <input type="number" id="total_amount" name="total_amount" disabled>
+            <input type="number" id="total_amount" name="total_amount">
             <label for="pts_redeemed">POINTS REDEEMED</label>
             <input type="number" id="pts_redeemed" name="pts_redeemed" disabled>
             <label for="amount_to_pay">AMOUNT TO PAY</label>

@@ -34,7 +34,7 @@ $("#add").click(function (){
     var pid = $('#product_id').val()
     var qty = $('#quantity').val()
     var ph_no = $('#customer_ph_no').val()
-
+    var order_id = $('#order_id').val()
 
     $.ajax({
         type: "POST",
@@ -43,6 +43,7 @@ $("#add").click(function (){
             "product_id": pid,
             "quantity": qty,
             "ph_no": ph_no,
+            "order_id": order_id
         }, success: function (data){
 
             var instance = data;

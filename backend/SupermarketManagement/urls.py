@@ -19,5 +19,6 @@ urlpatterns = [
     path('changeddropdown', views.chained_dropdown, name='chained_dropdown'),
     path('showsupplierinfo', views.show_supplier_info, name='show_supplier_info'),
     path('show_added_products_orders', views.show_added_products_orders, name='show_added_products_orders'),
-    path('changeddropdownorders', views.chained_dropdown_orders, name='changeddropdownorders')
+    path('changeddropdownorders', views.chained_dropdown_orders, name='changeddropdownorders'),
+    path('chaineddropdownsales', views.chained_dropdown_sales, name='chained_dropdown_sales')
 ]

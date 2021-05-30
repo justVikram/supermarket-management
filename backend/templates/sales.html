@@ -93,8 +93,18 @@
           <div class="left-coll">
             <form action="/sales" method="post">
                 {% csrf_token %}
+
               <label for="order_id">ORDER ID</label>
-              <input type="text" id="order_id" name="order_id">
+
+            <select name="order_id" id="order_id">
+              <option disabled selected="true"> --Select -- </option>
+                  {% for order in AllOrders %}
+                <option value="{{ order.order_id }}">{{ order.order_id}}</option>
+                  {% endfor %}
+              </select>
+
+
+
 
               <h3>PRODUCTS RETURNED :</h3>
               <label for="product"> Product ID</label>
@@ -108,8 +118,7 @@
               <label for="">QUANTITY</label>
               <input type="text" id="quantity" name="quantity">
 
-            <input type="submit" class="send-message-cta" value="Add">
-            <input type="submit" class="send-message-cta" value="Clear">
+            <input type="button" class="send-message-cta" value="Add">
 
             <label for="batch">REPLACEMENT ORDER ID</label>
             <input type="text" id="r_order_id" name="r_order_id">
@@ -117,7 +126,6 @@
             <input type="text" id="amount" name="amount" value="0">
 
                 <input type="submit" class="send-message-cta" value="SAVE">
-            <input type="submit" class="send-message-cta" value="DISCARD">
 
             </form>
           </div>
@@ -131,7 +139,7 @@
                 <div class="cardHeaderpurchase">
                   <h2>PRODUCTS</h2>
                 </div>
-                <table>
+                <table id = "showdata">
                   <thead>
                     <tr>
                       <td>ID</td>
@@ -142,28 +150,7 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
+
                     </tr>
 
                   </tbody>
@@ -179,6 +166,11 @@
 
     </div>
   </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'order_ShowProducts.js' %}"></script>
+<script src="{% static 'order_ChainedDropdown.js' %}"></script>
+
 </body>
 
 </html>

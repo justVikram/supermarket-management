@@ -8,6 +8,8 @@ from django.core import serializers
 procurement_amount = 0
 count = 0
 
+count_txn = 0
+
 def dashboard(request):
     AllOrders = models.Order.objects.filter(order_date=datetime.date.today())
     CountOrders = models.Order.objects.count()
@@ -35,7 +37,7 @@ def dashboard(request):
 
 def customer(request):
     AllCustomers = models.Customer.objects.all()
-    context = {'customers' : AllCustomers}
+    context = {'customers': AllCustomers}
     return render(request, 'customers.html', context)
 
 
@@ -93,8 +95,8 @@ def purchase_return(request):
 
 def sales_return(request):
 
-    AllProductIDs = models.Product.objects.order_by('brand')
-    context = {'AllProductIDs': AllProductIDs}
+    AllOrders = models.Order.objects.order_by('order_id')
+    context = {'AllOrders': AllOrders}
 
     if request.method == "POST":
         product_id = request.POST['product']
@@ -139,7 +141,7 @@ def transaction(request):
                'AllProducts': AllProducts, 'ProductsToDisplay': ProductsToBeDisplayed}
 
     if request.method == "POST":
-        order_id = next_order_id
+        order_id = next_order_id - 1
         staff_id = request.POST['staff_id']
         customer_ph_no = request.POST['customer_ph_no']
         product_id = request.POST['product_id']
@@ -150,34 +152,27 @@ def transaction(request):
 
         models.Membership.objects.filter(customer_ph_no=customer_ph_no).delete()
 
-        obj_orders = models.Order(staff_id=staff_id, customer_ph_no=customer_ph_no, order_id=order_id,
-                                  mode_of_payment=mode_of_payment, order_date=datetime.date.today())
-
-        obj_invoice = models.Invoice(order_id=order_id, amount_paid=amount_paid,
-                                     change_generated=0)
-
-        obj_membership = models.Membership(customer_ph_no=customer_ph_no, order_id=order_id,
-                                           pts_added_or_redeemed=pts_added_or_redeemed)
-
         obj_customer = models.Customer(customer_ph_no=customer_ph_no)
 
         if not models.Customer.objects.filter(customer_ph_no=customer_ph_no).exists():
             obj_customer.save()
 
-        old = models.Product.objects.filter(product_id=product_id)
-        newstock = int(old.get().available_stock) - int(quantity)
-        models.Product.objects.filter(product_id=product_id).update(available_stock=newstock)
-        newquantity = int(old.get().quantity_sold) + int(quantity)
-        models.Product.objects.filter(product_id=product_id).update(quantity_sold=newquantity)
 
-        obj_orders.save()
-        models.OrderedItems.objects.filter(order_id=next_order_id-1).update(order_id=next_order_id)
-        obj_invoice.save()
-        obj_membership.save()
+        # OLD NEW CODE HERE
+        models.Order.objects.filter(order_id=order_id).update(staff_id=staff_id, customer_ph_no=customer_ph_no,
+                     mode_of_payment=mode_of_payment, order_date=datetime.date.today())
+
+        models.Invoice.objects.filter(order_id=order_id).update(amount_paid=amount_paid, change_generated=0)
+        models.Membership.objects.filter(order_id=order_id).update(customer_ph_no=customer_ph_no,
+                                                                        pts_added_or_redeemed=pts_added_or_redeemed)
+
         print("Data has been saved")
 
         global amount
         amount = 0
+
+        global count_txn
+        count_txn = 0
 
     return render(request, 'transaction.html', context)
 
@@ -192,8 +187,10 @@ def show_added_products(request):
         ph_no = request.POST['ph_no']
         price = int(models.Product.objects.get(product_id=product_id).price)
         name = models.Product.objects.get(product_id=product_id).product_name
-        next_order_id = models.Order.objects.count()
+        next_order_id = request.POST.get('order_id', False)
         order_id = next_order_id
+
+        print(next_order_id)
 
         global amount
         amount += price*int(quantity)
@@ -201,8 +198,26 @@ def show_added_products(request):
         pts = list(models.Membership.objects.filter(customer_ph_no=ph_no).aggregate
                    (Sum('pts_added_or_redeemed')).values())[0]
 
+        global count_txn
+        count_txn = count_txn + 1
+
+        if count_txn == 1:
+
+            obj_order = models.Order(order_id=order_id)
+            obj_order.save()
+            obj_invoice = models.Invoice(order_id=order_id)
+            obj_invoice.save()
+            obj_membership = models.Membership(order_id=order_id)
+            obj_membership.save()
+
         obj_ordereditem = models.OrderedItems(order_id=order_id, quantity=quantity, product_id=product_id)
         obj_ordereditem.save()
+
+        old = models.Product.objects.filter(product_id=product_id)
+        newstock = int(old.get().available_stock) - int(quantity)
+        models.Product.objects.filter(product_id=product_id).update(available_stock=newstock)
+        newquantity = int(old.get().quantity_sold) + int(quantity)
+        models.Product.objects.filter(product_id=product_id).update(quantity_sold=newquantity)
 
         data = {
             'quantity': quantity,
@@ -260,12 +275,16 @@ def show_added_products_orders(request):
         count = count + 1
 
         if count == 1:
+
             obj_procurement = models.Procurement(batch_no=batch_no, delivery_date=datetime.date.today())
             obj_procurement.save()
 
-
         obj_procureditem = models.ProcuredItems(product_id=product_id, quantity=quantity, batch_no=batch_no)
         obj_procureditem.save()
+
+        old = models.Product.objects.filter(product_id=product_id)
+        newstock = int(old.get().available_stock) + int(quantity)
+        models.Product.objects.filter(product_id=product_id).update(available_stock=newstock)
 
         data = {
             'quantity': quantity,
@@ -286,5 +305,19 @@ def chained_dropdown_orders(request):
 
         data = {
             'SortByBrand': sort_by_brand
+        }
+        return JsonResponse(data)
+
+
+def chained_dropdown_sales(request):
+
+    if request.method == "POST":
+        order_id = request.POST['order_id']
+        print(order_id)
+
+        sort_by_order = list(models.OrderedItems.objects.filter(order_id=order_id).order_by('product_id').values('product_id', 'product_name'))
+
+        data = {
+            'SortByOrder': sort_by_order
         }
         return JsonResponse(data)
