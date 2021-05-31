@@ -96,32 +96,32 @@
                 {% csrf_token %}
 
               <label for="batch_no">BATCH NO</label>
-              <input type="text" id="batch_no" name="batch_no">
-
-              <h3>ADD PRODUCTS :</h3>
-              <label for="category"> BRAND</label>
-              <select name="category" id="category">
+            <select name="batch_no" id="batch_no">
               <option disabled selected="true"> --Select -- </option>
-                {% for brand in AllBrands %}
+                {% for batch in ALlBatchNo %}
 
-                <option value="1"> {{ brand }}</option>
+                <option value="{{ batch }}"> {{ batch }}</option>
                     {% endfor %}
 
               </select>
+
+              <h3>ADD PRODUCTS :</h3>
+
+
               <label for="product_id"> Product ID</label>
+
               <select name="product_id" id="product_id">
-                <option value="1">P101</option>
-                <option value="2">P102</option>
-                <option value="3">P103</option>
-                <option value="4">P104</option>
+
+                  <option disabled selected="true"> --Select -- </option>
+
               </select>
 
-            <input type="submit" class="send-message-cta" value="Add">
-            <input type="submit" class="send-message-cta" value="Clear">
-            <label for="amount_returned">TOTAL AMOUNT TO BE RECEIVED</label>
+            <input type="button" id="add" class="send-message-cta" value="Add">
+
+                <label for="amount_returned">TOTAL AMOUNT TO BE RECEIVED</label>
             <input type="text" id="amount_returned" name="amount_returned">
+
             <input type="submit" class="send-message-cta" value="SAVE">
-            <input type="submit" class="send-message-cta" value="DISCARD">
             </form>
           </div>
 
@@ -134,40 +134,22 @@
                 <div class="cardHeaderpurchase">
                   <h2>PRODUCTS</h2>
                 </div>
-                <table>
+                <table id = "showdata">
                   <thead>
                     <tr>
                       <td>ID</td>
                       <td>Name</td>
                       <td>Price</td>
                       <td>Quantity</td>
+                        <td> Total Amount</td>
                     </tr>
                   </thead>
+
                   <tbody>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
-                    <tr>
-                      <td>PD01</td>
-                      <td>MILK</td>
-                      <td>Rs.999</td>
-                      <td>10</td>
-                    </tr>
+
+                  <tr>
+
+                  </tr>
 
                   </tbody>
                 </table>
@@ -183,6 +165,11 @@
     </div>
 
   </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'purchase_ChainedDropdown.js' %}"></script>
+<script src="{% static 'purchase_ShowProducts.js' %}"></script>
+
 </body>
 
 </html>

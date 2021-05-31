@@ -7,12 +7,14 @@ from django.core import serializers
 
 procurement_amount = 0
 sales_return_amount = 0
+purchase_return_amount = 0
 
 count = 0
 count_txn = 0
 count_sales = 0
 
 total_sales_amount = 0
+total_purchase_amount = 0
 
 def dashboard(request):
     AllOrders = models.Order.objects.filter(order_date=datetime.date.today())
@@ -80,19 +82,16 @@ def order(request):
 
 
 def purchase_return(request):
-    AllBrands = models.Product.objects.order_by('brand').values_list('brand', flat=True).distinct()
-    context = {'AllBrands': AllBrands}
+    AllBatchNo = models.ProcuredItems.objects.order_by('batch_no').values_list('batch_no', flat=True).distinct()
+    context = {'ALlBatchNo': AllBatchNo}
     if request.method == "POST":
         batch_no = request.POST["batch_no"]
-        product_id = request.POST['product_id']
-        amount_returned = request.POST['amount_returned']
-        date = datetime.date.today()
 
-        obj_purchasereturn = models.PurchaseReturn(batch_no=batch_no, product_id=product_id,
-                                                   amount_returned=amount_returned, date=date)
-        obj_purchasereturn.save()
 
-        models.Product.objects.filter(product_id=product_id).update(available_stock=0)
+        global total_purchase_amount
+        total_purchase_amount = 0
+
+        models.ProcuredItems.objects.filter(batch_no=batch_no).delete()
 
     return render(request, 'purchase.html', context)
 
@@ -349,5 +348,53 @@ def show_added_products_sales(request):
             'product_id': product_id,
             'total_sales_amount': total_sales_amount,
             'sales_return_amount': sales_return_amount
+        }
+        return JsonResponse(data)
+
+
+def chained_dropdown_purchase(request):
+    if request.method == "POST":
+        batch_no = request.POST['batch_no']
+        print(batch_no)
+
+        sort_by_batch = list(models.ProcuredItems.objects.filter(batch_no=batch_no).order_by('product_id').values('product_id'))
+
+        data = {
+            'SortByBatch': sort_by_batch
+        }
+        return JsonResponse(data)
+
+
+def show_added_products_purchase(request):
+    if request.method == "POST":
+        product_id = request.POST['product_id']
+        batch_no = request.POST['batch_no']
+        price = int(models.Product.objects.get(product_id=product_id).price)
+        name = models.Product.objects.get(product_id=product_id).product_name
+        quantity = models.ProcuredItems.objects.get(batch_no=batch_no, product_id=product_id).quantity
+
+        global purchase_return_amount
+        purchase_return_amount += price * int(quantity)
+
+        global total_purchase_amount
+        total_purchase_amount += purchase_return_amount
+
+        obj = models.PurchaseReturn(product_id=product_id, date=datetime.date.today(), batch_no=batch_no,
+                                    amount_returned=purchase_return_amount)
+
+        obj.save()
+
+        old = models.Product.objects.filter(product_id=product_id)
+        newstock = int(old.get().available_stock) - int(quantity)
+        models.Product.objects.filter(product_id=product_id).update(available_stock=newstock)
+
+
+        data = {
+            'quantity': quantity,
+            'pname': name,
+            'price': price,
+            'product_id': product_id,
+            'total_purchase_amount': total_purchase_amount,
+            'purchase_return_amount': purchase_return_amount
         }
         return JsonResponse(data)

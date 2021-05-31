@@ -22,4 +22,6 @@ urlpatterns = [
     path('changeddropdownorders', views.chained_dropdown_orders, name='changeddropdownorders'),
     path('chaineddropdownsales', views.chained_dropdown_sales, name='chained_dropdown_sales'),
     path('show_added_products_sales', views.show_added_products_sales, name='show_added_products_sales'),
+    path('chaineddropdownpurchase', views.chained_dropdown_purchase, name='chained_dropdown_purchase'),
+    path('show_added_products_purchase', views.show_added_products_purchase, name='show_added_products_purchase'),
 ]
