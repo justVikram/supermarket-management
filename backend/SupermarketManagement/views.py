@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from SupermarketManagement import models
 from django.db.models import Sum
+
 from django.core import serializers
 
 procurement_amount = 0
@@ -398,3 +399,29 @@ def show_added_products_purchase(request):
             'purchase_return_amount': purchase_return_amount
         }
         return JsonResponse(data)
+
+
+def generatepdf(request, *args, **kwargs):
+
+    reqd_id = kwargs.get('order_id')
+
+    ordered_items = list(models.OrderedItems.objects.filter(order_id=reqd_id))
+    amount_paid = models.Invoice.objects.get(order_id=reqd_id).amount_paid
+    order_details = models.Order.objects.get(order_id=reqd_id)
+    product_info = []
+
+    for ordered_item in ordered_items:
+        corresponding_prod_details = models.Product.objects.get(product_id=ordered_item.product_id)
+        product_info.append(corresponding_prod_details)
+
+    prod_details_w_quantity = zip(product_info, ordered_items)
+
+    context = {
+        'ordered_items': ordered_items,
+        'amount_paid': amount_paid,
+        'order_details': order_details,
+        'product_info': product_info,
+        'complete_list': prod_details_w_quantity
+    }
+
+    return render(request, 'invoice-pdf.html', context)

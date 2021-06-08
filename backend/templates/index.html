@@ -135,6 +135,7 @@
                   <td>Order ID</td>
                   <td>Order Date</td>
                   <td>Phone no.</td>
+                    <td>Invoice</td>
                 </tr>
               </thead>
               <tbody>
@@ -145,7 +146,7 @@
                   <td>{{ Order.order_id }}</td>
                   <td>{{ Order.order_date }}</td>
                   <td>{{ Order.customer_ph_no }}</td>
-
+                <td><a href="/generatepdf/{{ Order.order_id }}"><button class="btn btn-primary" value="{{ Order.order_id }}">PDF</button> </a></td>
                 </tr>
               {% endfor %}
               </tbody>

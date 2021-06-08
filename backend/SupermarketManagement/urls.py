@@ -24,4 +24,5 @@ urlpatterns = [
     path('show_added_products_sales', views.show_added_products_sales, name='show_added_products_sales'),
     path('chaineddropdownpurchase', views.chained_dropdown_purchase, name='chained_dropdown_purchase'),
     path('show_added_products_purchase', views.show_added_products_purchase, name='show_added_products_purchase'),
+    path('generatepdf/<order_id>/', views.generatepdf, name='generatepdf')
 ]
