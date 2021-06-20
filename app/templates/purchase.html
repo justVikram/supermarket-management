@@ -1,0 +1,182 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="{% static 'scripts.js' %}"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Purchase Return</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}"/>
+    <script src="https://kit.fontawesome.com/2b25b5ad72.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+<!-- Navbar -->
+<div class="container">
+    <div class="navigation">
+        <ul>
+            <li id="header">
+                <a href="/admin">
+                    <span class="icon"><i class="fa fa-shopping-basket" aria-hidden="true"></i></span>
+                    <span class="title">
+              <h2>VINAYAK MART</h2>
+            </span>
+                </a>
+            </li>
+            <li>
+                <a href="/">
+                    <span class="icon"><i class="fa fa-tachometer" aria-hidden="true"></i></span>
+                    <span class="title">Dashboard</span>
+                </a>
+            </li>
+            <li>
+                <a href="/transaction">
+                    <span class="icon"><i class="fa fa-credit-card-alt" aria-hidden="true"></i></span>
+                    <span class="title">New Transaction</span>
+                </a>
+            </li>
+            <li>
+                <a href="/order">
+                    <span class="icon"><i class="fa fa-cart-plus" aria-hidden="true"></i></span>
+                    <span class="title">Place Order</span>
+                </a>
+            </li>
+            <li>
+                <a href="/inventory">
+                    <span class="icon"><i class="fa fa-archive" aria-hidden="true"></i></span>
+                    <span class="title">Inventory status</span>
+                </a>
+            </li>
+            <li>
+                <a href="/sales">
+                    <span class="icon"><i class="fa fa-money" aria-hidden="true"></i></span>
+                    <span class="title">New sales return</span>
+                </a>
+            </li>
+            <li>
+                <a href="/purchase">
+                    <span class="icon"><i class="fa fa-money" aria-hidden="true"></i></span>
+                    <span class="title">New purchase return</span>
+                </a>
+            </li>
+            <li>
+                <a href="/customer">
+                    <span class="icon"><i class="fa fa-users" aria-hidden="true"></i></span>
+                    <span class="title">Customers</span>
+                </a>
+            </li>
+            <li>
+                <a href="/staff">
+                    <span class="icon"><i class="fa fa-id-card" aria-hidden="true"></i></span>
+                    <span class="title">Staffs</span>
+                </a>
+            </li>
+            <li>
+                <a href="/graphs">
+                    <span class="icon"><i class="fas fa-chart-bar" aria-hidden="true"></i></span>
+                    <span class="title">Analysis</span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div class="topbar">
+            <div class="toggle" onclick="toggleMenu();"></div>
+            <div class="user">
+                <img src="{% static 'user.jpg' %}"/>
+            </div>
+        </div>
+
+
+        <!--Purchase return-->
+        <h1 class="pagename">PURCHASE RETURN</h1>
+
+        <div class="container">
+
+            <div class="sales">
+
+                <div class="left-coll">
+                    <form action="/purchase" method="post">
+                        {% csrf_token %}
+
+                        <label for="batch_no">BATCH NO</label>
+                        <select name="batch_no" id="batch_no">
+                            <option disabled selected="true"> --Select --</option>
+                            {% for batch in ALlBatchNo %}
+
+                                <option value="{{ batch }}"> {{ batch }}</option>
+                            {% endfor %}
+
+                        </select>
+
+                        <h3>ADD PRODUCTS :</h3>
+
+
+                        <label for="product_id"> Product ID</label>
+
+                        <select name="product_id" id="product_id">
+
+                            <option disabled selected="true"> --Select --</option>
+
+                        </select>
+
+                        <input type="button" id="add" class="send-message-cta" value="Add">
+
+                        <label for="amount_returned">TOTAL AMOUNT TO BE RECEIVED</label>
+                        <input type="text" id="amount_returned" name="amount_returned">
+
+                        <input type="submit" class="send-message-cta" value="SAVE">
+                    </form>
+                </div>
+
+                <div class="right-coll">
+
+                    <div class="details">
+                        <label for="">DATE</label>
+                        <input type="text" id="date" name="date" value="{% now "SHORT_DATE_FORMAT" %}" disabled>
+                        <div class="recentProducts">
+                            <div class="cardHeaderpurchase">
+                                <h2>PRODUCTS</h2>
+                            </div>
+                            <table id="showdata">
+                                <thead>
+                                <tr>
+                                    <td>ID</td>
+                                    <td>Name</td>
+                                    <td>Price</td>
+                                    <td>Quantity</td>
+                                    <td> Total Amount</td>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+
+                                <tr>
+
+                                </tr>
+
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="{% static 'purchase_ChainedDropdown.js' %}"></script>
+<script src="{% static 'purchase_ShowProducts.js' %}"></script>
+
+</body>
+
+</html>

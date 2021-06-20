@@ -2,9 +2,9 @@ import datetime
 from django.http import JsonResponse
 from django.shortcuts import render
 from SupermarketManagement import models
-from django.db.models import Sum
-
-from django.core import serializers
+from django.db.models import Sum, Count
+import pandas as pd
+from django.db.models.functions import TruncMonth
 
 procurement_amount = 0
 sales_return_amount = 0
@@ -16,6 +16,7 @@ count_sales = 0
 
 total_sales_amount = 0
 total_purchase_amount = 0
+
 
 def dashboard(request):
     AllOrders = models.Order.objects.filter(order_date=datetime.date.today())
@@ -50,13 +51,12 @@ def customer(request):
 
 def inventory(request):
     AllProducts = models.Product.objects.filter(available_stock__gt=10)
-    context = {'products' : AllProducts}
+    context = {'products': AllProducts}
 
     return render(request, 'inventory.html', context)
 
 
 def order(request):
-
     AllAgencies = models.Supplier.objects.order_by('supplier_ph_no').distinct()
     AllBrands = models.Product.objects.order_by('brand').values_list('brand', flat=True).distinct()
     context = {'AllAgencies': AllAgencies, 'AllBrands': AllBrands}
@@ -88,7 +88,6 @@ def purchase_return(request):
     if request.method == "POST":
         batch_no = request.POST["batch_no"]
 
-
         global total_purchase_amount
         total_purchase_amount = 0
 
@@ -98,7 +97,6 @@ def purchase_return(request):
 
 
 def sales_return(request):
-
     AllOrders = models.Order.objects.order_by('order_id')
     context = {'AllOrders': AllOrders}
 
@@ -121,7 +119,6 @@ def staff(request):
 
 
 def transaction(request):
-
     AllBrands = models.Product.objects.order_by('brand').values_list('brand', flat=True).distinct()
 
     AllProducts = models.Product.objects.order_by('product_name').all()
@@ -152,14 +149,14 @@ def transaction(request):
         if not models.Customer.objects.filter(customer_ph_no=customer_ph_no).exists():
             obj_customer.save()
 
-
         # OLD NEW CODE HERE
         models.Order.objects.filter(order_id=order_id).update(staff_id=staff_id, customer_ph_no=customer_ph_no,
-                     mode_of_payment=mode_of_payment, order_date=datetime.date.today())
+                                                              mode_of_payment=mode_of_payment,
+                                                              order_date=datetime.date.today())
 
         models.Invoice.objects.filter(order_id=order_id).update(amount_paid=amount_paid, change_generated=0)
         models.Membership.objects.filter(order_id=order_id).update(customer_ph_no=customer_ph_no,
-                                                                        pts_added_or_redeemed=pts_added_or_redeemed)
+                                                                   pts_added_or_redeemed=pts_added_or_redeemed)
 
         print("Data has been saved")
 
@@ -188,7 +185,7 @@ def show_added_products(request):
         print(next_order_id)
 
         global amount
-        amount += price*int(quantity)
+        amount += price * int(quantity)
 
         pts = list(models.Membership.objects.filter(customer_ph_no=ph_no).aggregate
                    (Sum('pts_added_or_redeemed')).values())[0]
@@ -197,7 +194,6 @@ def show_added_products(request):
         count_txn = count_txn + 1
 
         if count_txn == 1:
-
             obj_order = models.Order(order_id=order_id)
             obj_order.save()
             obj_invoice = models.Invoice(order_id=order_id)
@@ -230,7 +226,8 @@ def chained_dropdown(request):
         brand = request.POST['brand']
         print(brand)
 
-        sort_by_brand = list(models.Product.objects.filter(brand=brand).order_by('product_id').values('product_id', 'product_name'))
+        sort_by_brand = list(
+            models.Product.objects.filter(brand=brand).order_by('product_id').values('product_id', 'product_name'))
 
         data = {
             'SortByBrand': sort_by_brand
@@ -264,13 +261,12 @@ def show_added_products_orders(request):
         name = models.Product.objects.get(product_id=product_id).product_name
 
         global procurement_amount
-        procurement_amount += price*int(quantity)
+        procurement_amount += price * int(quantity)
 
         global count
         count = count + 1
 
         if count == 1:
-
             obj_procurement = models.Procurement(batch_no=batch_no, delivery_date=datetime.date.today())
             obj_procurement.save()
 
@@ -296,7 +292,8 @@ def chained_dropdown_orders(request):
         brand = request.POST['brand']
         print(brand)
 
-        sort_by_brand = list(models.Product.objects.filter(brand=brand).order_by('product_id').values('product_id', 'product_name'))
+        sort_by_brand = list(
+            models.Product.objects.filter(brand=brand).order_by('product_id').values('product_id', 'product_name'))
 
         data = {
             'SortByBrand': sort_by_brand
@@ -305,12 +302,12 @@ def chained_dropdown_orders(request):
 
 
 def chained_dropdown_sales(request):
-
     if request.method == "POST":
         order_id = request.POST['order_id']
         print(order_id)
 
-        sort_by_order = list(models.OrderedItems.objects.filter(order_id=order_id).order_by('product_id').values('product_id'))
+        sort_by_order = list(
+            models.OrderedItems.objects.filter(order_id=order_id).order_by('product_id').values('product_id'))
 
         data = {
             'SortByOrder': sort_by_order
@@ -358,7 +355,8 @@ def chained_dropdown_purchase(request):
         batch_no = request.POST['batch_no']
         print(batch_no)
 
-        sort_by_batch = list(models.ProcuredItems.objects.filter(batch_no=batch_no).order_by('product_id').values('product_id'))
+        sort_by_batch = list(
+            models.ProcuredItems.objects.filter(batch_no=batch_no).order_by('product_id').values('product_id'))
 
         data = {
             'SortByBatch': sort_by_batch
@@ -389,7 +387,6 @@ def show_added_products_purchase(request):
         newstock = int(old.get().available_stock) - int(quantity)
         models.Product.objects.filter(product_id=product_id).update(available_stock=newstock)
 
-
         data = {
             'quantity': quantity,
             'pname': name,
@@ -402,7 +399,6 @@ def show_added_products_purchase(request):
 
 
 def generatepdf(request, *args, **kwargs):
-
     reqd_id = kwargs.get('order_id')
 
     ordered_items = list(models.OrderedItems.objects.filter(order_id=reqd_id))
@@ -425,3 +421,21 @@ def generatepdf(request, *args, **kwargs):
     }
 
     return render(request, 'invoice-pdf.html', context)
+
+
+def generate_graphs(request):
+    orders = models.Order.objects.all()
+    sales = models.Invoice.objects.all()
+
+    df = pd.DataFrame(
+        {'date': orders.values_list('order_date', flat=True), 'amount': sales.values_list('amount_paid', flat=True)})
+    revenue = df.groupby('date')['amount'].sum().reset_index()
+
+    revenue['amount_sum'] = revenue['amount'].cumsum()
+
+    context = {
+        'products': models.Product.objects.values('product_name', 'brand', 'quantity_sold'),
+        'orders': models.Order.objects.values('order_date').annotate(total=Count('order_id')).order_by('order_date'),
+        'revenue': revenue
+    }
+    return render(request, 'graphs.html', context)

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- semantic UI -->
+    <link rel="stylesheet" type='text/css'
+          href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.14/semantic.min.css">
+    <!--Chart js-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
+            integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css"
+          integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous"/>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <title>Analysis</title>
+</head>
+<body>
+
+{% block scripts %}
+    <script>
+        $(document).ready(function () {
+            var ctx = document.getElementById('myChart').getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        {% for product in products %} '{{ product.brand }} {{ product.product_name }}', {% endfor %}],
+                    datasets: [{
+                        label: '# of Sales',
+                        data: [{% for product in products %} '{{ product.quantity_sold }}', {% endfor %}],
+                        backgroundColor: [
+                            'maroon', 'violet', 'green', 'orange', 'pink', 'blue', 'purple', 'yellow', 'maroon',
+                            'violet', 'green', 'orange', 'pink', 'blue', 'purple', 'yellow', 'maroon', 'violet',
+                            'green', 'orange', 'pink', 'blue', 'purple', 'yellow', 'maroon', 'violet', 'green',
+                            'orange', 'pink', 'blue', 'purple', 'yellow', 'maroon', 'violet', 'green', 'orange',
+                            'pink', 'blue', 'purple', 'yellow',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var ctx = document.getElementById('myChart2').getContext('2d');
+            var myChart2 = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [{% for order in orders %} '{{ order.order_date }}', {% endfor %}],
+                    datasets: [{
+                        label: '# of Orders Processed',
+                        data: [{% for order in orders %} '{{ order.total }}', {% endfor %}],
+                        backgroundColor: [
+                            'maroon', 'violet', 'green', 'orange', 'pink', 'blue', 'purple', 'yellow', 'maroon',
+                            'violet', 'green', 'orange', 'pink', 'blue', 'purple', 'yellow', 'maroon', 'violet',
+                            'green', 'orange', 'pink', 'blue', 'purple', 'yellow', 'maroon', 'violet', 'green',
+                            'orange', 'pink', 'blue', 'purple', 'yellow', 'maroon', 'violet', 'green', 'orange',
+                            'pink', 'blue', 'purple', 'yellow',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+
+            var ctx = document.getElementById('myChart3').getContext('2d');
+            var myChart3 = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [{% for entry in revenue.itertuples %} '{{ entry.date }}', {% endfor %}],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: [{% for entry in revenue.itertuples %} '{{ entry.amount_sum }}', {% endfor %}],
+
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+        })
+    </script>
+{% endblock scripts %}
+<canvas id="myChart" width="350" height="100"></canvas>
+<canvas id="myChart2" width="500" height="100"></canvas>
+<canvas id="myChart3" width="500" height="100"></canvas>
+</body>
+</html>
