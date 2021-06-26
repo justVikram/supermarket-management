@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 STATICFILES_DIRS = [
-    "/Users/avikram/Documents/Programming/Python/BackendForSMS/static"
+    'static'
 ]
 
 # Application definition

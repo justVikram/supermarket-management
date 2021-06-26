@@ -4,7 +4,7 @@ from django.shortcuts import render
 from SupermarketManagement import models
 from django.db.models import Sum, Count
 import pandas as pd
-from django.db.models.functions import TruncMonth
+import numpy as np
 
 procurement_amount = 0
 sales_return_amount = 0
@@ -24,11 +24,8 @@ def dashboard(request):
     CountCustomers = models.Customer.objects.count()
     ProductsOFS = models.Product.objects.filter(available_stock__lte=10)
 
-    products_sold = models.OrderedItems.objects.all()
-    income = 0
-    for product in products_sold:
-        product_reqd = models.Product.objects.get(product_id=product.product_id)
-        income = income + product.quantity * product_reqd.price
+    products_sold = np.array(models.Invoice.objects.values_list('amount_paid', flat=True))
+    income = products_sold.sum()
 
     procured_items = models.ProcuredItems.objects.all()
     expense = 0
